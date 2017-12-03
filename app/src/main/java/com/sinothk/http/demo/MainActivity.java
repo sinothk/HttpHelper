@@ -3,6 +3,7 @@ package com.sinothk.http.demo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.lzy.okgo.model.HttpParams;
 import com.sinothk.http.v1.HttpCallback;
 import com.sinothk.http.v1.HttpManager;
 import com.sinothk.http.v1.HttpResult;
@@ -20,6 +21,23 @@ public class MainActivity extends AppCompatActivity {
                 if (result == null) {
 
                 }
+            }
+        });
+
+        HttpManager.post("url", "tag", new HttpParams(), new HttpCallback() {
+            @Override
+            public void upComplete(HttpResult result) {
+                if (result == null) {
+
+                }
+            }
+        });
+
+        HttpManager.get("url", "tag", new HttpCallback() {
+
+            @Override
+            public void upComplete(HttpResult result) {
+
             }
         });
     }

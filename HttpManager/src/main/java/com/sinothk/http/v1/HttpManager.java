@@ -12,6 +12,7 @@ import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.cookie.store.PersistentCookieStore;
+import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.request.GetRequest;
 
@@ -27,8 +28,7 @@ import okhttp3.Response;
  * 功能：
  */
 public class HttpManager {
-
-    Context mContext;
+    private static Activity currActivity;
 
     public static void cancel(String tag) {
         //根据 Tag 取消请求
@@ -41,7 +41,6 @@ public class HttpManager {
     }
 
     public static void init(Application mainApplication) {
-
 //        //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文
@@ -58,7 +57,6 @@ public class HttpManager {
         try {
             //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
             OkGo.getInstance()
-
                     // 打开该调试开关,打印级别INFO,并不是异常,是为了显眼,不需要就不要加入该行
                     // 最后的true表示是否打印okgo的内部异常，一般打开方便调试错误
                     .debug("OkGo", Level.INFO, true)
@@ -106,6 +104,95 @@ public class HttpManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setCommonHeader(HttpHeaders headers) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文
+//        headers.put("commonHeaderKey2", "commonHeaderValue2");
+        OkGo.getInstance().addCommonHeaders(headers);
+    }
+
+//    public static HttpManager start(Activity thisActivity) {
+//        currActivity = thisActivity;
+//        return new HttpManager();
+//    }
+
+    /**
+     * 执行 get
+     *
+     * @param url
+     * @param tag
+     * @param httpCallback
+     */
+    public static void get(String url, String tag, final HttpCallback httpCallback) {
+        OkGo.get(url)     // 请求方式和请求url
+                .tag(tag)                       // 请求的 tag, 主要用于取消对应的请求
+//                .cacheKey("cacheKey")            // 设置当前请求的缓存key,建议每个不同功能的请求设置一个
+                .cacheMode(CacheMode.NO_CACHE)    // 缓存模式，详细请看缓存介绍
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(String resultStr, Call call, Response response) {
+                        if (httpCallback != null) {
+                            HttpResult httpResult = new HttpResult();
+                            httpResult.code = HttpResult.OK;
+                            httpResult.data = resultStr;
+                            httpCallback.upComplete(httpResult);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        super.onError(call, response, e);
+//                        currActivity.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+                        httpCallback.upComplete(HttpResult.getExceptionResult(HttpResult.ERROR, e.getMessage()));
+//                            }
+//                        });
+                    }
+                });
+    }
+
+    /**
+     * 普通Post
+     *
+     * @param url
+     * @param tag
+     * @param httpParams
+     * @param callback
+     */
+    public static void post(String url, String tag, HttpParams httpParams, final HttpCallback callback) {
+        if (httpParams == null) {
+            httpParams = new HttpParams();
+        }
+
+        OkGo.post(url)//
+                .tag(tag)//
+                //	.params("param1", "paramValue1")//  这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
+//                .upString("这是要上传的长文本数据！")//
+                //	.upString("这是要上传的长文本数据！", MediaType.parse("application/xml")) // 比如上传xml数据，这里就可以自己指定请求头
+                .params(httpParams)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(String resultStr, Call call, Response response) {
+                        if (callback != null) {
+                            HttpResult httpResult = new HttpResult();
+                            httpResult.code = HttpResult.OK;
+                            httpResult.data = resultStr;
+                            callback.upComplete(httpResult);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, final Exception e) {
+                        if (callback != null) {
+                            callback.upComplete(HttpResult.getExceptionResult(HttpResult.ERROR, e.getMessage().toString()));
+                        }
+                    }
+                });
+
+        printLog(url);
     }
 
     /**
@@ -176,6 +263,41 @@ public class HttpManager {
         Log.e("HttpManager", "-----------------------------------");
     }
 
+
+    public static void postJson(final Activity activity, String url, String tag, String jsonStr, final HttpCallback callback) {
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("key1", "value1");
+//        params.put("key2", "这里是需要提交的json格式数据");
+//        params.put("key3", "也可以使用三方工具将对象转成json字符串");
+//        params.put("key4", "其实你怎么高兴怎么写都行");
+////        JSONObject jsonObject = new JSONObject(params);
+//        jsonObject.toString();
+        OkGo.post(url)//
+                .tag(tag)//
+                .upJson(jsonStr)//
+                .execute(new StringCallback() {
+                    public void onSuccess(String resultStr, Call call, Response response) {
+                        if (callback != null) {
+                            HttpResult httpResult = new HttpResult();
+                            httpResult.code = HttpResult.OK;
+                            httpResult.data = resultStr;
+                            callback.upComplete(httpResult);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, final Exception e) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.upComplete(HttpResult.getExceptionResult(HttpResult.ERROR, e.getMessage().toString()));
+                            }
+                        });
+                    }
+                });
+        printLog(url);
+    }
+
     /**
      * 传JSON参数
      *
@@ -238,16 +360,58 @@ public class HttpManager {
      * @param url
      * @param tag
      * @param httpParams
-     * @param dataClass
-     * @param isList
      * @param httpProgressCallback
      */
-    public static void postFileWhiteHttpParams(String url, String tag, HttpParams httpParams, final Class<?> dataClass, final boolean isList, final HttpProgressCallback httpProgressCallback) {
+    public static void postHttpParamsAndFile(String url, String tag, HttpParams httpParams, File file, final HttpProgressCallback httpProgressCallback) {
         OkGo.post(url)//
                 .tag(tag)//
                 .isMultipart(true)       // 强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
 //                .params("param1", "paramValue1") 		// 这里可以上传参数
-//                .params("file1", new File("filepath1"))   // 可以添加文件上传
+                .params("fileFlag", file)   // 可以添加文件上传
+//                .params("file2", new File("filepath2")) 	// 支持多文件同时添加上传
+//                .addFileParams("key", List<File> files)	// 这里支持一个key传多个文件
+                .params(httpParams)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(String resultStr, Call call, Response response) {
+                        if (httpProgressCallback != null) {
+                            HttpResult httpResult = new HttpResult();
+                            httpResult.code = HttpResult.OK;
+                            httpResult.data = resultStr;
+                            httpProgressCallback.upComplete(httpResult);
+                        }
+                    }
+
+                    @Override
+                    public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+                        //这里回调上传进度(该回调在主线程,可以直接更新ui)
+                        httpProgressCallback.upProgress(currentSize, totalSize, progress, networkSpeed);
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        httpProgressCallback.upComplete(HttpResult.getExceptionResult(HttpResult.ERROR, e.getMessage()));
+                    }
+                });
+        printLog(url);
+    }
+
+    /**
+     * 上传一个文件和参数
+     *
+     * @param url
+     * @param tag
+     * @param httpParams
+     * @param dataClass
+     * @param isList
+     * @param httpProgressCallback
+     */
+    public static void postHttpParamsAndFile(String url, String tag, HttpParams httpParams, File file, final Class<?> dataClass, final boolean isList, final HttpProgressCallback httpProgressCallback) {
+        OkGo.post(url)//
+                .tag(tag)//
+                .isMultipart(true)       // 强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
+//                .params("param1", "paramValue1") 		// 这里可以上传参数
+                .params("fileFlag", file)   // 可以添加文件上传
 //                .params("file2", new File("filepath2")) 	// 支持多文件同时添加上传
 //                .addFileParams("key", List<File> files)	// 这里支持一个key传多个文件
                 .params(httpParams)
@@ -295,7 +459,7 @@ public class HttpManager {
      * @param isList
      * @param httpProgressCallback
      */
-    public static void postFileListWhiteHttpParams(String url, String tag, HttpParams httpParams, List<File> fileList, final Class<?> dataClass, final boolean isList, final HttpProgressCallback httpProgressCallback) {
+    public static void postHttpParamsAndFileList(String url, String tag, HttpParams httpParams, List<File> fileList, final Class<?> dataClass, final boolean isList, final HttpProgressCallback httpProgressCallback) {
         OkGo.post(url)//
                 .tag(tag)//
                 .isMultipart(true)       // 强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
@@ -404,30 +568,5 @@ public class HttpManager {
 //                //这里回调上传进度(该回调在主线程,可以直接更新ui)
 //            }
 //        });
-    }
-
-    /**
-     * 执行 get
-     *
-     * @param url
-     * @param tag
-     * @param httpParams
-     * @return
-     */
-    public static GetRequest get(String url, String tag, HttpParams httpParams) {
-        GetRequest getRequest = OkGo.get(url).tag(tag);
-        getRequest.params(httpParams);
-        return getRequest;
-
-//        OkGo.get(Urls.URL_METHOD)     // 请求方式和请求url
-//                .tag(this)                       // 请求的 tag, 主要用于取消对应的请求
-//                .cacheKey("cacheKey")            // 设置当前请求的缓存key,建议每个不同功能的请求设置一个
-//                .cacheMode(CacheMode.DEFAULT)    // 缓存模式，详细请看缓存介绍
-//                .execute(new StringCallback() {
-//                    @Override
-//                    public void onSuccess(String s, Call call, Response response) {
-//                        // s 即为所需要的结果
-//                    }
-//                });
     }
 }
