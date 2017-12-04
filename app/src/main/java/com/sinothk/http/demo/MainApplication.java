@@ -3,6 +3,7 @@ package com.sinothk.http.demo;
 import android.app.Application;
 
 import com.sinothk.http.v1.HttpManager;
+import com.sinothk.http.v2.OHttpManager;
 
 /**
  * Created by 梁玉涛 on 2017/11/25.
@@ -16,5 +17,6 @@ public class MainApplication extends Application {
         super.onCreate();
 
         HttpManager.init(this);
+        OHttpManager.init(this, BaseData.class);
     }
 }
