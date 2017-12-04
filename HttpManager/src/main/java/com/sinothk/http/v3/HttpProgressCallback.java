@@ -6,5 +6,5 @@ package com.sinothk.http.v3;
  */
 
 public interface HttpProgressCallback extends HttpCallback {
-    void upProgress(long currentSize, long totalSize, float progress, long networkSpeed);
+    void onProgress(long currentSize, long totalSize, float progress, long networkSpeed);
 }
