@@ -190,68 +190,6 @@ public class HttpManager {
         printLog(url);
     }
 
-	/**
-     * 传HttpParams参数，
-     *
-     * @param url        url
-     * @param tag        取消标签
-     * @param httpParams 参数
-     * @param dataClass  data的类型，是基本数据类型就传 null
-     * @param isList     data的类型是list
-     * @param callback
-     */
-    public static void post(String url, String tag, HttpParams httpParams, final Class<?> dataClass, final boolean isList, final HttpCallback callback) {
-        if (httpParams == null) {
-            httpParams = new HttpParams();
-        }
-
-        OkGo.post(url)//
-                .tag(tag)//
-                //	.params("param1", "paramValue1")//  这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
-//                .upString("这是要上传的长文本数据！")//
-//	.upString("这是要上传的长文本数据！", MediaType.parse("application/xml")) // 比如上传xml数据，这里就可以自己指定请求头
-                .params(httpParams)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(String resultStr, Call call, Response response) {
-                        try {
-                            HttpResult httpResult = JSONObject.parseObject(resultStr, HttpResult.class);
-                            if (dataClass == null && callback != null) {
-                                // 基本数据类型
-                                callback.onComplete(httpResult);
-                                return;
-                            }
-
-                            // data是Bean
-                            if (httpResult.result != null && !"".equals(httpResult.result.toString())) {
-                                if (isList) {
-                                    httpResult.result = JSON.parseArray(httpResult.result.toString(), dataClass);
-                                } else {
-                                    httpResult.result = JSON.parseObject(httpResult.result.toString(), dataClass);
-                                }
-                            }
-
-                            if (callback != null) {
-                                callback.onComplete(httpResult);
-                            }
-                        } catch (Exception e) {
-                            if (callback != null) {
-                                callback.onComplete(HttpResult.getExceptionResult(HttpResult.ERROR_DATA, resultStr));
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(Call call, Response response, final Exception e) {
-                        if (callback != null) {
-                            callback.onComplete(HttpResult.getExceptionResult(HttpResult.ERROR, e.getMessage().toString()));
-                        }
-                    }
-                });
-
-        printLog(url);
-    }
-	
     /**
      * 传HttpParams参数，
      *
