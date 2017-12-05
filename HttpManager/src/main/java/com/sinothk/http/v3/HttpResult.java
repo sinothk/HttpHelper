@@ -13,7 +13,7 @@ public class HttpResult {
     /**
      * 常量
      */
-    public static int OK = 200;
+    public static int OK = 0;
     public static int ERROR = 1; // 本地错误
     public static int ERROR_DATA = 2;// 数据格式错误
 
