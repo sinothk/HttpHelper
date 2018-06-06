@@ -28,76 +28,73 @@ public class V5MainActivity extends AppCompatActivity {
     }
 
     public void test(View view) {
-//        HttpHelper.get("https://www.so.com/?src=so.com", new HttpCallback() {
-//            @Override
-//            public void onComplete(final int code, final Object result) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (code == HttpConstants.SUCCESS) {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        });
+        HttpHelper.get("https://www.so.com/?src=so.com", new HttpCallback() {
+            @Override
+            public void onComplete(final int code, final Object result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (code == HttpConstants.SUCCESS) {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        HttpHelper.get("https://www.so.com/?src=so.com", null, new HttpCallback() {
+            @Override
+            public void onComplete(final int code, final Object result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (code == HttpConstants.SUCCESS) {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        HttpHelper.get4List("https://www.so.com/?src=so.com", null, new HttpCallback() {
+            @Override
+            public void onComplete(final int code, final Object result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (code == HttpConstants.SUCCESS) {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
-//        HttpHelper.get("https://www.so.com/?src=so.com", null, new HttpCallback() {
-//            @Override
-//            public void onComplete(final int code, final Object result) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (code == HttpConstants.SUCCESS) {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        });
-
-//        HttpHelper.get4List("https://www.so.com/?src=so.com", null, new HttpCallback() {
-//            @Override
-//            public void onComplete(final int code, final Object result) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (code == HttpConstants.SUCCESS) {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        });
-//
-//        HttpHelper.post("https://www.so.com/?src=so.com", null, new HttpCallback() {
-//            @Override
-//            public void onComplete(final int code, final Object result) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (code == HttpConstants.SUCCESS) {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        });
-
-//        HttpHelper.downloadBitmap("http://p1.so.qhimgs1.com/t011cd2f45483b7b3a1.jpg", new HttpCallback() {
-//            @Override
-//            public void onComplete(int code, Object result) {
-//                imageView.setImageBitmap((Bitmap) result);
-//            }
-//        });
+        HttpHelper.post("https://www.so.com/?src=so.com", null, new HttpCallback() {
+            @Override
+            public void onComplete(final int code, final Object result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (code == HttpConstants.SUCCESS) {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(V5MainActivity.this, (String) result, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        HttpHelper.downloadBitmap("http://p1.so.qhimgs1.com/t011cd2f45483b7b3a1.jpg", new HttpCallback() {
+            @Override
+            public void onComplete(int code, Object result) {
+                imageView.setImageBitmap((Bitmap) result);
+            }
+        });
 
         HttpHelper.downloadFile("http://banzou.cdn.aliyun.com/apk/autoupdate_1527820151_872.apk", new HttpProgressCallback() {
             @Override
