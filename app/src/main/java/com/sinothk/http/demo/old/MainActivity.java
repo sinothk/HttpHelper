@@ -1,8 +1,10 @@
-package com.sinothk.http.demo;
+package com.sinothk.http.demo.old;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
+import com.sinothk.http.demo.R;
 import com.sinothk.http.v2.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,4 +31,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

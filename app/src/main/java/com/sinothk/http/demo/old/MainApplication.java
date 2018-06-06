@@ -1,8 +1,9 @@
-package com.sinothk.http.demo;
+package com.sinothk.http.demo.old;
 
 import android.app.Application;
 
-import com.sinothk.http.okHttp.HttpHelper;
+import com.sinothk.http.v1.HttpManager;
+import com.sinothk.http.v2.OHttpManager;
 
 /**
  * Created by 梁玉涛 on 2017/11/25.
@@ -15,8 +16,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        HttpHelper.init(this);
-//        HttpManager.init(this);
-//        OHttpManager.init(this, BaseData.class);
+        HttpManager.init(this);
+        OHttpManager.init(this, BaseData.class);
     }
 }
