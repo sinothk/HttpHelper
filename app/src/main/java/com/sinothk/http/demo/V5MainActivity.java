@@ -89,6 +89,7 @@ public class V5MainActivity extends AppCompatActivity {
                 });
             }
         });
+        
         HttpHelper.downloadBitmap("http://p1.so.qhimgs1.com/t011cd2f45483b7b3a1.jpg", new HttpCallback() {
             @Override
             public void onComplete(int code, Object result) {
