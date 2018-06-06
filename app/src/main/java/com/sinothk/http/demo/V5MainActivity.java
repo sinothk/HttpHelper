@@ -97,7 +97,7 @@ public class V5MainActivity extends AppCompatActivity {
             }
         });
 
-        HttpHelper.downloadFile("http://banzou.cdn.aliyun.com/apk/autoupdate_1527820151_872.apk", new HttpProgressCallback() {
+        HttpHelper.downloadFile("http://banzou.cdn.aliyun.com/apk/autoupdate_1527820151_872.apk", "", "", new HttpProgressCallback() {
             @Override
             public void onComplete(final int code, final Object result) {
                 runOnUiThread(new Runnable() {

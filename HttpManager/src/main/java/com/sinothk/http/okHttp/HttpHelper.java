@@ -549,12 +549,14 @@ public class HttpHelper extends HttpHelperBase {
      * 下载文件
      *
      * @param url
+     * @param path
+     * @param fileName
      * @param httpProgressCallback
      */
-    public static void downloadFile(String url, final HttpProgressCallback httpProgressCallback) {
+    public static void downloadFile(String url, String path, String fileName, final HttpProgressCallback httpProgressCallback) {
         OkGo.get(url).tag(url)//
                 .cacheMode(CacheMode.NO_CACHE)
-                .execute(new FileCallback("cba.zip") {  //文件下载时，可以指定下载的文件目录和文件名
+                .execute(new FileCallback(path, fileName) {  //文件下载时，可以指定下载的文件目录和文件名
                     @Override
                     public void onSuccess(File file, Call call, Response response) {
                         // file 即为文件数据，文件保存在指定目录

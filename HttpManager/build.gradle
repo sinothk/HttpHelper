@@ -28,10 +28,9 @@ dependencies {
     })
     api "com.android.support:appcompat-v7:$APPCOMPAT_VERSION"
     testImplementation 'junit:junit:4.12'
-    api 'com.github.sinothk:OUtil:v2.0.20180208'
-
+    //    api 'com.github.sinothk:OUtil:v2.0.20180208'
     api files('libs/okgo-2.1.4.jar')
     api files('libs/okhttp-3.4.1.jar')
     api files('libs/okio-1.9.0.jar')
-
+    api files('libs/fastjson-1.2.47.jar')
 }
